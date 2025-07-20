@@ -38,7 +38,7 @@
  --sidebar-border: oklch(0.92 0.004 286.32);
  --sidebar-ring: oklch(0.705 0.015 286.067);
 }
- 
+
 .dark {
  --background: oklch(0.141 0.005 285.823);
  --foreground: oklch(0.985 0 0);
@@ -71,6 +71,61 @@
  --sidebar-accent-foreground: oklch(0.985 0 0);
  --sidebar-border: oklch(1 0 0 / 10%);
  --sidebar-ring: oklch(0.552 0.016 285.938);
+}
+
+/* Cray mode - efficient color cycling using CSS animations */
+.cray {
+  animation: cray-cycle 0.3s linear infinite;
+}
+
+@keyframes cray-cycle {
+  0% {
+    --background: oklch(1 0 0); /* White */
+    --foreground: oklch(0 0 0); /* Black */
+    --primary: oklch(0.6 0.25 25); /* Red */
+    --accent: oklch(0.6 0.25 25); /* Red */
+    --muted: oklch(0.8 0.1 25); /* Light red */
+    --border: oklch(0.6 0.25 25); /* Red */
+  }
+  33.33% {
+    --background: oklch(0.6 0.25 25); /* Red */
+    --foreground: oklch(1 0 0); /* White */
+    --primary: oklch(0 0 0); /* Black */
+    --accent: oklch(0 0 0); /* Black */
+    --muted: oklch(0.3 0.15 25); /* Dark red */
+    --border: oklch(0 0 0); /* Black */
+  }
+  66.67% {
+    --background: oklch(0 0 0); /* Black */
+    --foreground: oklch(0.6 0.25 25); /* Red */
+    --primary: oklch(1 0 0); /* White */
+    --accent: oklch(1 0 0); /* White */
+    --muted: oklch(0.2 0.1 25); /* Very dark red */
+    --border: oklch(0.6 0.25 25); /* Red */
+  }
+  100% {
+    --background: oklch(1 0 0); /* White */
+    --foreground: oklch(0 0 0); /* Black */
+    --primary: oklch(0.6 0.25 25); /* Red */
+    --accent: oklch(0.6 0.25 25); /* Red */
+    --muted: oklch(0.8 0.1 25); /* Light red */
+    --border: oklch(0.6 0.25 25); /* Red */
+  }
+}
+
+/* Ensure cray mode overrides theme colors */
+.cray {
+  --card: var(--background);
+  --card-foreground: var(--foreground);
+  --popover: var(--background);
+  --popover-foreground: var(--foreground);
+  --primary-foreground: oklch(0.1 0.1 0);
+  --secondary: var(--muted);
+  --secondary-foreground: var(--foreground);
+  --muted-foreground: var(--foreground);
+  --accent-foreground: var(--foreground);
+  --input: var(--border);
+  --ring: var(--primary);
 }
 
 @theme inline {

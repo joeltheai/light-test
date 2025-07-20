@@ -2,6 +2,17 @@
 	let { children } = $props();
 	import { ModeWatcher, toggleMode } from 'mode-watcher';
 	import '../app.css';
+
+	let isCrayMode = $state(false);
+
+	function toggleCrayMode() {
+		isCrayMode = !isCrayMode;
+		if (isCrayMode) {
+			document.documentElement.classList.add('cray');
+		} else {
+			document.documentElement.classList.remove('cray');
+		}
+	}
 </script>
 
 <ModeWatcher />
@@ -10,19 +21,8 @@
 		<div class="dark:hidden">L</div>
 		<div class="hidden dark:block">L</div>
 	</button>
-	<button class="ml-2 font-serif" onclick={() => {
-		let intervalId: number | null = (window as any).__modeToggleIntervalId || null;
-		if (intervalId) {
-			clearInterval(intervalId);
-			(window as any).__modeToggleIntervalId = null;
-		} else {
-			intervalId = setInterval(() => {
-				toggleMode();
-			}, 100);
-			(window as any).__modeToggleIntervalId = intervalId;
-		}
-	}}>
-		<div>
+	<button class="ml-2 font-serif" onclick={toggleCrayMode}>
+		<div class={isCrayMode ? 'text-primary' : ''}>
 			Cray
 		</div>
 	</button>
