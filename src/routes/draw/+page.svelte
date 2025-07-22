@@ -98,6 +98,8 @@
     welcome to the draw section
 </div>
 
+<a href="/" class="plex">back</a>
+
 <div class="mt-6 flex flex-col gap-4 items-center">
     <p>Upload exactly 3 images of yourself</p>
     {#if images.length < 3}
