@@ -1,7 +1,7 @@
 <script lang="ts">
 	let { children } = $props();
 	import { ModeWatcher, toggleMode } from 'mode-watcher';
-	import '../app.css';
+	import '../../app.css';
 
 	let isCrayMode = $state(false);
 
