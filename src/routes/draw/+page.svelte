@@ -9,6 +9,8 @@
   let videoEl: HTMLVideoElement;
   let stream: MediaStream | null = null;
   let canvasEl: HTMLCanvasElement;
+  let availableCameras: MediaDeviceInfo[] = [];
+  let selectedCameraId = '';
 
   function handleFiles(event: Event) {
     const files = (event.target as HTMLInputElement).files;
@@ -32,16 +34,37 @@
     cameraInput.value = '';
   }
 
-  function openCamera() {
+  async function getAvailableCameras() {
+    try {
+      const devices = await navigator.mediaDevices.enumerateDevices();
+      availableCameras = devices.filter(device => device.kind === 'videoinput');
+      if (availableCameras.length > 0) {
+        selectedCameraId = availableCameras[0].deviceId;
+      }
+    } catch (err) {
+      console.error('Error getting cameras:', err);
+    }
+  }
+
+  async function openCamera() {
     if (images.length < 3) {
       showCamera = true;
-      startCamera();
+      await getAvailableCameras();
+      await startCamera();
     }
   }
 
   async function startCamera() {
     try {
-      stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      if (stream) {
+        stream.getTracks().forEach(track => track.stop());
+      }
+      
+      const constraints = {
+        video: selectedCameraId ? { deviceId: { exact: selectedCameraId } } : true
+      };
+      
+      stream = await navigator.mediaDevices.getUserMedia(constraints);
       if (videoEl) {
         videoEl.srcObject = stream;
         await videoEl.play();
@@ -49,6 +72,15 @@
     } catch (err) {
       alert('Could not access camera.');
       showCamera = false;
+    }
+  }
+
+  async function switchCamera() {
+    if (availableCameras.length > 1) {
+      const currentIndex = availableCameras.findIndex(cam => cam.deviceId === selectedCameraId);
+      const nextIndex = (currentIndex + 1) % availableCameras.length;
+      selectedCameraId = availableCameras[nextIndex].deviceId;
+      await startCamera();
     }
   }
 
@@ -156,6 +188,15 @@
     <div class="bg-white rounded-lg  p-4 flex flex-col items-center relative">
       <video bind:this={videoEl} autoplay playsinline class="rounded w-80 h-60 bg-black"></video>
       <canvas bind:this={canvasEl} style="display:none;"></canvas>
+      
+      {#if availableCameras.length > 1}
+        <div class="mt-2">
+          <button class="plex text-sm" on:click={switchCamera}>
+            Switch Camera ({availableCameras.length} available)
+          </button>
+        </div>
+      {/if}
+      
       <div class="flex gap-4 mt-4">
         <button class="plex" on:click={capturePhoto}>Capture</button>
         <button class="plex" on:click={closeCamera}>Cancel</button>
